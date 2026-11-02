@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Material de campanya 29-N</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<style>
+/* Layout: mapa a pantalla completa; panell flotant (selector de partit + llegenda) a dalt a l'esquerra, a baix en mòbil */
+:root{
+  --bg:#eef0ec; --panel:#ffffff; --fg:#1d2321; --muted:#5f6a66; --line:#d5dad6;
+  --chip:#f2f4f1; --chip-on:#1d2321; --chip-on-fg:#ffffff; --nodata:#c9cdc9; --stroke:rgba(255,255,255,.55); --mun:rgba(34,38,36,.62); --prov:#141716; --halo:rgba(255,255,255,.85);
+  --font-body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#151917; --panel:#1f2422; --fg:#e8ece9; --muted:#9aa6a1; --line:#343b38;
+  --chip:#2a302d; --chip-on:#e8ece9; --chip-on-fg:#151917; --nodata:#3d4441; --stroke:rgba(0,0,0,.35); --mun:rgba(18,20,19,.75); --prov:#0b0d0c; --halo:rgba(255,255,255,.7); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#151917; --panel:#1f2422; --fg:#e8ece9; --muted:#9aa6a1; --line:#343b38;
+  --chip:#2a302d; --chip-on:#e8ece9; --chip-on-fg:#151917; --nodata:#3d4441; --stroke:rgba(0,0,0,.35); --mun:rgba(18,20,19,.75); --prov:#0b0d0c; --halo:rgba(255,255,255,.7); color-scheme:dark}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px}
+#map{position:fixed;inset:0;background:var(--bg)}
+
+/* --- Leaflet (CSS essencial, inline) --- */
+.leaflet-pane,.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-tile-container,.leaflet-pane>svg,.leaflet-pane>canvas,.leaflet-zoom-box,.leaflet-image-layer,.leaflet-layer{position:absolute;left:0;top:0}
+.leaflet-container{overflow:hidden;-webkit-tap-highlight-color:transparent;outline-offset:1px;font-family:var(--font-body)}
+.leaflet-tile{filter:inherit;visibility:hidden;user-select:none;-webkit-user-drag:none}
+.leaflet-tile-loaded{visibility:inherit}
+.leaflet-container img.leaflet-tile{max-width:none!important;max-height:none!important;width:auto;padding:0}
+.leaflet-pane{z-index:400}.leaflet-tile-pane{z-index:200}.leaflet-overlay-pane{z-index:400}.leaflet-shadow-pane{z-index:500}.leaflet-marker-pane{z-index:600}.leaflet-tooltip-pane{z-index:650}.leaflet-popup-pane{z-index:700}
+.leaflet-map-pane canvas{z-index:100}.leaflet-map-pane svg{z-index:200}
+.leaflet-zoom-animated{transform-origin:0 0}
+.leaflet-zoom-anim .leaflet-zoom-animated{transition:transform .25s cubic-bezier(0,0,.25,1)}
+.leaflet-zoom-anim .leaflet-tile,.leaflet-pan-anim .leaflet-tile{transition:none}
+.leaflet-zoom-anim .leaflet-zoom-hide{visibility:hidden}
+.leaflet-interactive{cursor:pointer}
+.leaflet-grab{cursor:grab}.leaflet-dragging .leaflet-grab{cursor:grabbing}
+.leaflet-control{position:relative;z-index:800;pointer-events:auto;float:left;clear:both}
+.leaflet-top,.leaflet-bottom{position:absolute;z-index:1000;pointer-events:none}
+.leaflet-top{top:env(safe-area-inset-top,0px)}.leaflet-bottom{bottom:env(safe-area-inset-bottom,0px)}
+.leaflet-right{right:env(safe-area-inset-right,0px)}.leaflet-left{left:0}
+.leaflet-right .leaflet-control{float:right;margin-right:12px}
+.leaflet-top .leaflet-control{margin-top:12px}.leaflet-bottom .leaflet-control{margin-bottom:8px}
+.leaflet-bar{border-radius:8px;border:1px solid var(--line);background:var(--panel);overflow:hidden}
+.leaflet-bar a{display:block;width:34px;height:34px;line-height:34px;text-align:center;text-decoration:none;color:var(--fg);font:600 18px/34px var(--font-body);background:var(--panel)}
+.leaflet-bar a+a{border-top:1px solid var(--line)}
+.leaflet-bar a:hover{background:var(--chip)}
+.leaflet-bar a.leaflet-disabled{opacity:.4;cursor:default}
+.leaflet-control-attribution{background:color-mix(in srgb,var(--panel) 80%,transparent);color:var(--muted);font-size:11px;padding:1px 6px;margin:0!important}
+.leaflet-control-attribution a{color:var(--muted)}
+.leaflet-popup{position:absolute;text-align:left;margin-bottom:20px}
+.leaflet-popup-content-wrapper{background:var(--panel);color:var(--fg);border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.22);padding:1px}
+.leaflet-popup-content{margin:12px 16px 14px;min-width:200px;line-height:1.35}
+.leaflet-popup-tip-container{width:40px;height:20px;position:absolute;left:50%;margin-top:-1px;margin-left:-20px;overflow:hidden;pointer-events:none}
+.leaflet-popup-tip{width:17px;height:17px;padding:1px;margin:-10px auto 0;transform:rotate(45deg);background:var(--panel)}
+.leaflet-container a.leaflet-popup-close-button{position:absolute;top:0;right:0;border:none;text-align:center;width:28px;height:28px;font:18px/28px var(--font-body);color:var(--muted);text-decoration:none;background:transparent}
+.leaflet-container a.leaflet-popup-close-button:hover{color:var(--fg)}
+.leaflet-tooltip{position:absolute;padding:4px 9px;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:6px;white-space:nowrap;pointer-events:none;box-shadow:0 2px 8px rgba(0,0,0,.15);font:600 13px/1.2 var(--font-body)}
+@media (hover:none){.leaflet-tooltip{display:none}}
+
+/* --- Panell --- */
+.panel{position:fixed;z-index:1100;top:calc(12px + env(safe-area-inset-top,0px));left:max(12px,env(safe-area-inset-left,0px));
+  width:min(350px,calc(100vw - 24px));grid-template-columns:minmax(0,1fr);background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  box-shadow:0 4px 20px rgba(0,0,0,.12);padding:14px 16px 16px;display:grid;gap:12px;box-sizing:border-box}
+.eyebrow{font:600 12px/1 var(--font-display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{margin:4px 0 0;font:700 26px/1.05 var(--font-display);text-wrap:balance}
+.parties{display:flex;flex-wrap:wrap;gap:6px}
+.parties button{font:600 14px/1 var(--font-display);letter-spacing:.03em;border:1px solid var(--line);background:var(--chip);color:var(--fg);
+  border-radius:999px;padding:7px 11px 7px 9px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.parties button i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.parties button[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-fg);border-color:var(--chip-on)}
+.parties button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.legend{display:grid;gap:6px}
+.legend .ttl{font-size:13px;color:var(--muted)}
+.ramp{display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+.ramp span{height:14px}
+.ramp span:first-child{border-radius:4px 0 0 4px}.ramp span:last-child{border-radius:0 4px 4px 0}
+.ticks{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;font:500 12px/1.2 var(--font-body);font-variant-numeric:tabular-nums;color:var(--fg)}
+.ticks span{text-align:center}
+.note{font-size:12px;color:var(--muted);line-height:1.35;margin:0}
+.nd{display:inline-block;width:10px;height:10px;background:var(--nodata);border-radius:2px;vertical-align:-1px;margin-right:4px}
+.status{font-size:13px;color:var(--muted)}
+.lines{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:12px;color:var(--muted)}
+.lines span{display:inline-flex;align-items:center;gap:6px}
+.lines svg{width:26px;height:8px;overflow:visible}
+.panel{max-height:calc(100vh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));overflow-y:auto}
+.block{display:grid;gap:7px;padding-top:10px;border-top:1px solid var(--line)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.lbl{font:600 12px/1 var(--font-display);letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.linkbtn{font:500 13px/1 var(--font-body);color:var(--fg);background:none;border:0;padding:2px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.linkbtn:focus-visible,.search input:focus-visible,.fvals input:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.search{display:flex;gap:6px}
+.search input{flex:1;min-width:0;font:15px var(--font-body);color:var(--fg);background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.search button{font:600 14px/1 var(--font-display);letter-spacing:.03em;border:1px solid var(--chip-on);background:var(--chip-on);color:var(--chip-on-fg);border-radius:8px;padding:0 12px;cursor:pointer}
+.msg{font-size:12px;color:var(--muted);margin:-4px 0 0}
+.msg:empty{display:none}
+/* Doble control lliscant */
+.dual{position:relative;height:28px}
+.dual .track,.dual .fill{position:absolute;top:12px;height:4px;border-radius:2px}
+.dual .track{left:0;right:0;background:var(--line)}
+.dual .fill{background:var(--fg)}
+.dual input[type=range]{position:absolute;left:0;top:0;width:100%;height:28px;margin:0;background:none;pointer-events:none;-webkit-appearance:none;appearance:none}
+.dual input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;pointer-events:auto;width:20px;height:20px;border-radius:50%;background:var(--panel);border:2px solid var(--fg);cursor:grab;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.dual input[type=range]::-moz-range-thumb{pointer-events:auto;width:16px;height:16px;border-radius:50%;background:var(--panel);border:2px solid var(--fg);cursor:grab;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.dual input[type=range]::-webkit-slider-runnable-track{background:none}
+.dual input[type=range]::-moz-range-track{background:none}
+.dual input[type=range]:focus-visible::-webkit-slider-thumb{outline:2px solid var(--fg);outline-offset:2px}
+.fvals{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted)}
+.fvals label{display:inline-flex;align-items:center;gap:5px}
+.fvals input{width:4.6em;font:600 14px var(--font-body);font-variant-numeric:tabular-nums;color:var(--fg);background:var(--chip);border:1px solid var(--line);border-radius:6px;padding:4px 6px;text-align:right}
+.fcount{font-size:13px;font-variant-numeric:tabular-nums}
+.fcount b{font-weight:600}
+.grp{display:grid;gap:7px}
+.ramp button{height:14px;border:0;padding:0;cursor:pointer}
+.ramp button[aria-pressed="true"]{outline:2.5px solid var(--fg);outline-offset:1px;position:relative;z-index:1}
+.ramp button:focus-visible{outline:2px solid var(--fg)}
+.ramp button:first-child{border-radius:4px 0 0 4px}.ramp button:last-child{border-radius:0 4px 4px 0}
+.fonsrow select{font:14px var(--font-body);color:var(--fg);background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:5px 8px;max-width:60%}
+.oprow input[type=range]{flex:1;min-width:0;accent-color:var(--fg)}
+.opv{font-size:13px;font-variant-numeric:tabular-nums;width:3.2em;text-align:right}
+.fonsrow select:focus-visible,.oprow input:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+/* Llegenda bivariant 3x3 */
+.biv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start}
+.bivwrap{display:grid;grid-template-columns:auto auto;grid-template-rows:auto auto;gap:4px 6px;align-items:center}
+.bivgrid{display:grid;grid-template-columns:repeat(3,26px);grid-template-rows:repeat(3,26px);gap:2px}
+.bivgrid button{border:0;padding:0;border-radius:3px;cursor:pointer;outline-offset:1px}
+.bivgrid button[aria-pressed="true"]{outline:2.5px solid var(--fg)}
+.bivgrid button:focus-visible{outline:2px solid var(--fg)}
+.bivy{writing-mode:vertical-rl;transform:rotate(180deg);font-size:12px;color:var(--fg);white-space:nowrap}
+.bivx{grid-column:2;font-size:12px;color:var(--fg);white-space:nowrap}
+.bivtxt{font-size:12px;color:var(--muted);line-height:1.4;display:grid;gap:4px;min-width:0;overflow-wrap:anywhere}
+.bivtxt b{color:var(--fg);font-weight:600}
+.bivtab{font-size:12px;min-width:0;max-width:100%}
+.panel{width:min(440px,calc(100vw - 24px))}
+.bivtab th,.bivtab td{font-size:11.5px}
+.panel.wide{width:min(460px,calc(100vw - 24px))}
+.bivtab summary{cursor:pointer;font-weight:600;color:var(--fg);padding:2px 0}
+.bivtab summary:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.bivtab .scroll{overflow-x:auto;max-width:100%;margin-top:6px}
+.bivtab table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+.bivtab th,.bivtab td{padding:3px 3px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+.bivtab th{font-weight:600;color:var(--muted);font-size:11px}
+.bivtab th:first-child,.bivtab td:first-child{text-align:left}
+.bivtab tr.sel td{background:var(--chip);font-weight:600}
+.bivtab tfoot td{font-weight:600;border-bottom:0}
+.sw{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:5px}
+/* Pantalla de contrasenya */
+.lock{position:fixed;inset:0;z-index:2000;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.lock form{width:min(360px,100%);box-sizing:border-box;background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.18);padding:22px 22px 20px;display:grid;gap:12px}
+.lock h2{margin:2px 0 0;font:700 24px/1.1 var(--font-display)}
+.lock p{margin:0;font-size:14px;color:var(--muted);line-height:1.4}
+.lock input{font:16px var(--font-body);color:var(--fg);background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.lock input:focus-visible,.lock button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.lock button{font:600 16px/1 var(--font-display);letter-spacing:.03em;border:0;background:var(--chip-on);color:var(--chip-on-fg);border-radius:8px;padding:12px;cursor:pointer}
+.lock button[disabled]{opacity:.6;cursor:progress}
+.lock .err{color:#b42318;font-size:13px;min-height:1.2em}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .lock .err{color:#ff8a7a}}
+:root[data-theme="dark"] .lock .err{color:#ff8a7a}
+
+/* Pop-up */
+.pp-mun{font:700 19px/1.1 var(--font-display)}
+.pp-sec{font-size:12px;color:var(--muted);margin-top:2px;font-variant-numeric:tabular-nums}
+.pp-big{display:flex;align-items:baseline;gap:8px;margin-top:10px}
+.pp-big b{font:700 30px/1 var(--font-display);font-variant-numeric:tabular-nums}
+.pp-big span{font-size:13px;color:var(--muted)}
+.pp-rows{display:grid;grid-template-columns:auto auto;gap:3px 14px;margin-top:10px;padding-top:9px;border-top:1px solid var(--line);font-size:13px}
+.pp-rows dt{color:var(--muted)}.pp-rows dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+
+@media (max-width:600px){
+  .panel,.panel.wide{max-height:52vh;top:auto;bottom:calc(10px + env(safe-area-inset-bottom,0px));left:max(10px,env(safe-area-inset-left,0px));width:calc(100vw - 20px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));padding:12px 14px;gap:10px}
+  h1{font-size:21px}
+  .leaflet-bottom.leaflet-right{bottom:auto;top:env(safe-area-inset-top,0px)}
+  .leaflet-control-attribution{margin-top:0}
+}
+@media (prefers-reduced-motion:reduce){.leaflet-zoom-anim .leaflet-zoom-animated{transition:none}}
+</style>
+</head>
+<body>
+<div id="map" role="region" aria-label="Mapa de municipis"></div>
+
+<div class="lock" id="lock">
+  <form id="lock-form" autocomplete="off">
+    <div class="eyebrow">Campanya 29-N · 2026</div>
+    <h2>Accés restringit</h2>
+    <p>Introdueix la contrasenya per veure el repartiment de material de campanya.</p>
+    <input type="password" id="pwd" aria-label="Contrasenya" placeholder="Contrasenya" required>
+    <button type="submit" id="pwd-btn">Entra</button>
+    <div class="err" id="pwd-err" aria-live="polite"></div>
+  </form>
+</div>
+
+<aside class="panel">
+  <div>
+    <div class="eyebrow">Eleccions generals · 29 de novembre de 2026</div>
+    <h1>Repartiment de material de campanya</h1>
+  </div>
+  <form class="search" id="search" role="search" autocomplete="off">
+    <input id="q" type="search" list="munis" placeholder="Busca un municipi…" aria-label="Busca un municipi">
+    <button type="submit">Vés-hi</button>
+  </form>
+  <datalist id="munis"></datalist>
+  <p class="msg" id="q-msg" aria-live="polite"></p>
+  <p class="note" style="margin-top:-4px">Repartiment per als 96 municipis de més de 15.000 habitants.</p>
+  <div class="legend">
+    <div class="ttl">Índex de prioritat de campanya (mitjana del municipi, 0–100)</div>
+    <div class="ramp" id="ramp"></div>
+    <div class="ticks" id="ticks"></div>
+  </div>
+  <div class="row fonsrow">
+    <label class="lbl" for="fons">Mapa de fons</label>
+    <select id="fons">
+      <option value="gris" selected>Carrers (gris)</option>
+      <option value="color">Carrers (color)</option>
+      <option value="orto">Ortofoto</option>
+    </select>
+  </div>
+  <div class="row oprow">
+    <label class="lbl" for="opac">Opacitat de la capa</label>
+    <input type="range" id="opac" min="0" max="100" step="5" value="85" aria-label="Opacitat de la capa de colors">
+    <span id="opac-v" class="opv">85 %</span>
+  </div>
+  <div class="block">
+    <div class="row"><span class="lbl">Material per província</span></div>
+    <div class="bivtab"><div class="scroll" id="tot"></div></div>
+  </div>
+  <p class="note">Vora gruixuda: municipis que reben material (més de 15.000 habitants). Fes clic en un municipi per veure'n el repartiment. Província de Lleida: sense polipropilens.</p>
+  <div class="status" id="status">Carregant municipis…</div>
+</aside>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+// ---- Dades xifrades (AES-256-GCM, clau derivada de la contrasenya amb PBKDF2-SHA256)
+const ITER=250000, bins={}, cache={};
+['municipis'].forEach(n=>{ bins[n]=fetch('dades/'+n+'.bin').then(r=>{ if(!r.ok) throw new Error(r.status); return r.arrayBuffer(); }); });
+async function desxifra(nom,pwd){
+  const buf=new Uint8Array(await bins[nom]);
+  const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(pwd),'PBKDF2',false,['deriveKey']);
+  const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:buf.slice(0,16),iterations:ITER,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt']);
+  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:buf.slice(16,28)},key,buf.slice(28));
+  return new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream('gzip'))).json();
+}
+let obre; const clauP=new Promise(r=>obre=r);
+const obteDades=nom=>clauP.then(pwd=>cache[nom]||desxifra(nom,pwd));
+async function prova(pwd){
+  try{ cache.municipis=await desxifra('municipis',pwd); }catch(e){ return e.name==='OperationError' ? 'mala' : 'xarxa'; }
+  try{ sessionStorage.setItem('mapa-pwd',pwd); }catch(e){}
+  document.getElementById('lock').hidden=true; obre(pwd); return 'ok';
+}
+document.getElementById('lock-form').addEventListener('submit',async e=>{
+  e.preventDefault(); const btn=document.getElementById('pwd-btn'), err=document.getElementById('pwd-err');
+  btn.disabled=true; btn.textContent='Comprovant…'; err.textContent='';
+  const r=await prova(document.getElementById('pwd').value);
+  btn.disabled=false; btn.textContent='Entra';
+  if(r==='mala'){ err.textContent='Contrasenya incorrecta.'; document.getElementById('pwd').select(); }
+  if(r==='xarxa'){ err.textContent="No s'han pogut carregar les dades. Torna-ho a provar en uns segons."; }
+});
+(()=>{ let s=null; try{ s=sessionStorage.getItem('mapa-pwd'); }catch(e){} if(s) prova(s); else document.getElementById('pwd').focus(); })();
+
+const $=id=>document.getElementById(id);
+const MATS=['Polipropilens','Pancartes','Cartells 70×100','Cartells 50×70','Cartells 21×42','Cartells A2','Cartells A3','Cartells A4'];
+const BR=[17,23,33,52], RAMP=['#f1eee6','#d8d2c3','#fdbb84','#e34a33','#7f0000'], LAB=['Molt baixa','Baixa','Mitjana','Alta','Molt alta'];
+const fmt=v=>v==null?'–':v.toLocaleString('ca-ES');
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const cls=v=>{ let i=0; while(i<4&&v>=BR[i]) i++; return i; };
+let esc='b', capa=null, OP=0.85, dades=[];
+const map=L.map('map',{preferCanvas:true,zoomSnap:0.25,minZoom:7,maxZoom:16}).fitBounds([[40.52,0.16],[42.86,3.33]]);
+map.zoomControl.setPosition('topright'); map.attributionControl.setPrefix(false);
+map.attributionControl.addAttribution('Dades: Idescat / ICGC / INE');
+const icgc=c=>`https://geoserveis.icgc.cat/servei/catalunya/mapa-base/wmts/${c}/MON3857NW/{z}/{x}/{y}.png`;
+const FONS={'gris':'topografic-gris','color':'estandard','orto':'orto-hibrida'};
+const fons=L.tileLayer(icgc(FONS.gris),{attribution:'Mapa base © <a href="https://www.icgc.cat" target="_blank" rel="noopener">ICGC</a> (CC BY 4.0) · © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',maxZoom:19,maxNativeZoom:18}).addTo(map);
+$('fons').addEventListener('change',e=>{ fons.setUrl(icgc(FONS[e.target.value])); if(e.target.value==='orto') fons.once('tileerror',()=>fons.setUrl(icgc('orto'))); });
+function estil(f){ const p=f.properties, inc=!!p[esc];
+  return {fillColor:RAMP[cls(p.ix)], fillOpacity:OP*(inc?1:0.55), color: inc?css('--prov'):css('--stroke'), weight: inc?1.4:0.4, opacity: inc?0.9:0.7}; }
+function popup(p){
+  const v=p[esc], dd=p[esc+'d'];
+  const files = v ? MATS.map((m,i)=>`<dt>${m}</dt><dd>${fmt(v[i])}</dd>`).join('') : '';
+  return `<div class="pp-mun">${p.n}</div>
+    <div class="pp-sec">${p.c} · ${p.pv}</div>
+    <div class="pp-big"><b>${fmt(Math.round(p.ix))}</b><span>índex de prioritat · ${LAB[cls(p.ix)]}</span></div>
+    ${v ? `<dl class="pp-rows">${files}</dl>` : `<div class="pp-sec" style="margin-top:8px">No rep material (municipi de menys de 15.000 habitants).</div>`}
+    ${dd ? `<div class="pp-sec" style="margin-top:8px"><b>Polipropilens per districte:</b><br>${dd}</div>` : ''}
+    <div class="pp-sec" style="margin-top:6px">Sumar 2023: ${p.s.toLocaleString('ca-ES',{minimumFractionDigits:1,maximumFractionDigits:1})} % sobre vàlids</div>`;
+}
+function totals(){
+  const T={}; for(const pv of ['Barcelona','Girona','Lleida','Tarragona','Total']) T[pv]=MATS.map(()=>0);
+  let n=0; for(const p of dades){ const v=p[esc]; if(!v) continue; n++; v.forEach((x,i)=>{ T[p.pv][i]+=x; T.Total[i]+=x; }); }
+  const ab=['Polip.','Panc.','70×100','50×70','21×42','A2','A3','A4'];
+  $('tot').innerHTML=`<table><thead><tr><th>Província</th>${ab.map(a=>`<th>${a}</th>`).join('')}</tr></thead><tbody>`+
+    ['Barcelona','Girona','Lleida','Tarragona'].map(pv=>`<tr><td>${pv}</td>${T[pv].map(x=>`<td>${fmt(x)}</td>`).join('')}</tr>`).join('')+
+    `</tbody><tfoot><tr><td>Total (${n} mun.)</td>${T.Total.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr></tfoot></table>`;
+}
+function llegenda(){
+  $('ramp').innerHTML=RAMP.map(c=>`<span style="background:${c}"></span>`).join('');
+  $('ticks').innerHTML=[`< ${BR[0]}`,`${BR[0]}–${BR[1]}`,`${BR[1]}–${BR[2]}`,`${BR[2]}–${BR[3]}`,`≥ ${BR[3]}`].map(x=>`<span>${x}</span>`).join('');
+}
+llegenda();
+$('opac').addEventListener('input',e=>{ OP=+e.target.value/100; $('opac-v').textContent=e.target.value+' %'; capa&&capa.setStyle(estil); });
+// cercador
+const norm=t=>t.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9ñç]/g,'');
+const natural=n=>{ const m=n.match(/^(.*), (el|la|els|les|l'|lo)$/i); if(!m) return n; const a=m[2].toLowerCase(); return (a[0].toUpperCase()+a.slice(1))+(a==="l'"?'':' ')+m[1]; };
+const munis=new Map(); let destaca=null;
+function anaA(text){
+  const q=norm(text); if(!q) return; let l=munis.get(q);
+  if(!l){ const c=[...munis.entries()].filter(([k])=>k.startsWith(q)); const c2=c.length?c:[...munis.entries()].filter(([k])=>k.includes(q));
+    if(c2.length===1) l=c2[0][1]; else { $('q-msg').textContent = c2.length?`Hi ha ${c2.length} municipis que coincideixen: tria'n un de la llista.`:`No s'ha trobat «${text}».`; return; } }
+  $('q').value=l.feature.properties.n; $('q-msg').textContent='';
+  map.flyToBounds(l.getBounds(),innerWidth>600?{paddingTopLeft:[document.querySelector('.panel').offsetWidth+20,30],paddingBottomRight:[30,30],maxZoom:13,duration:0.8}:{paddingBottomRight:[20,innerHeight*0.55],maxZoom:13,duration:0.8});
+  map.once('moveend',()=>l.openPopup());
+}
+$('search').addEventListener('submit',e=>{ e.preventDefault(); anaA($('q').value); });
+$('q').addEventListener('change',()=>{ if(munis.has(norm($('q').value))) anaA($('q').value); });
+obteDades('municipis').then(g=>{
+  capa=L.geoJSON(g,{style:estil,onEachFeature:(f,l)=>{ f.properties.n=natural(f.properties.n);
+    l.bindPopup(()=>popup(f.properties),{maxWidth:320});
+    l.on('mouseover',()=>{ l.setStyle({weight:2.5,color:css('--fg')}); l.bringToFront(); });
+    l.on('mouseout',()=>capa.resetStyle(l));
+    munis.set(norm(f.properties.n),l); }}).addTo(map);
+  dades=g.features.map(f=>f.properties);
+  $('munis').innerHTML=[...dades.map(p=>p.n)].sort((a,b)=>a.localeCompare(b,'ca')).map(n=>`<option value="${n.replace(/"/g,'&quot;')}"></option>`).join('');
+  totals(); $('status').hidden=true;
+}).catch(()=>{ $('status').textContent="No s'han pogut carregar les dades."; });
+</script>
+</body>
+</html>
