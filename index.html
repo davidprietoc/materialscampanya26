@@ -286,6 +286,7 @@ function popup(p){
   return `<div class="pp-mun">${p.n}</div>
     <div class="pp-sec">${p.c} · ${p.pv}${p.nou?' · inclòs per tenir regidors':''}</div>
     <div class="pp-big"><b>${fmt(Math.round(p.ix))}</b><span>índex de prioritat · ${LAB[cls(p.ix)]}</span></div>
+    ${v && p.tp ? `<div class="pp-sec" style="margin-top:8px"><b>Polipropilens:</b> Ada ${fmt(p.tp[0])} · Genèrics ${fmt(p.tp[1])} · Ernest ${fmt(p.tp[2])}${p.tp[3]?` · Específics ${p.pv} ${fmt(p.tp[3])}`:''}</div>` : ''}
     ${v ? `<dl class="pp-rows">${files}</dl>` : `<div class="pp-sec" style="margin-top:8px">No rep material.</div>`}
     ${dd ? `<div class="pp-sec" style="margin-top:8px"><b>Polipropilens per districte:</b><br>${dd}</div>` : ''}
     <div class="pp-sec" style="margin-top:6px">Sumar 2023: ${p.s.toLocaleString('ca-ES',{minimumFractionDigits:1,maximumFractionDigits:1})} % sobre vàlids</div>`;
